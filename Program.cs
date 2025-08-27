@@ -27,7 +27,21 @@ namespace Z339xLib
         /// <returns>True إذا نجحت العملية</returns>
         public static bool CaptureAndSave(string portName, string fileName, int format = 2)
         {
-            return Native_GetImageAndSaveFile(portName, fileName, format);
+            try
+            {
+                bool result = Native_GetImageAndSaveFile(portName, fileName, format);
+                if (!result)
+                {
+                    int errorCode = Marshal.GetLastWin32Error();
+                    Console.WriteLine($"⚠️ Native function failed with error code: {errorCode}");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ Exception in CaptureAndSave: {ex.Message}");
+                return false;
+            }
         }
 
         /// <summary>
@@ -35,7 +49,7 @@ namespace Z339xLib
         /// </summary>
         /// <param name="portName">مثلاً "AUTO" أو COM Port</param>
         /// <returns>Bitmap object أو null إذا صار خطأ</returns>
-        public static Bitmap CaptureBitmap(string portName)
+        public static Bitmap? CaptureBitmap(string portName)
         {
             IntPtr bmpPtr = Native_GetImageByBitmap(portName);
             if (bmpPtr == IntPtr.Zero)
@@ -56,7 +70,7 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("🔌 Trying direct save with GetImageAndSaveFile...");
+        Console.WriteLine("🔌 Starting barcode device capture test...");
         string saveDir = @"C:\\Temp";
         string savePath = @"C:\\Temp\\capture.jpg";
 
@@ -65,21 +79,54 @@ class Program
             if (!System.IO.Directory.Exists(saveDir))
             {
                 System.IO.Directory.CreateDirectory(saveDir);
+                Console.WriteLine($"📁 Created directory: {saveDir}");
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"⚠️ Cannot ensure save directory '{saveDir}': {ex.Message}");
+            return;
         }
 
+        // Try different approaches
+        Console.WriteLine("🔌 Trying direct save with GetImageAndSaveFile...");
         bool success = Z339xLib.Z339xLibSdk.CaptureAndSave("AUTO", savePath, 2); // JPEG
         if (success)
         {
             Console.WriteLine("✅ Saved directly: " + savePath);
+            return;
         }
-        else
+
+        Console.WriteLine("❌ Direct save failed. Trying different formats...");
+        
+        // Try BMP format
+        string bmpPath = @"C:\\Temp\\capture.bmp";
+        success = Z339xLib.Z339xLibSdk.CaptureAndSave("AUTO", bmpPath, 1); // BMP
+        if (success)
         {
-            Console.WriteLine("❌ Direct save failed.");
+            Console.WriteLine("✅ Saved as BMP: " + bmpPath);
+            return;
         }
+
+        Console.WriteLine("❌ BMP save also failed. Trying explicit COM ports...");
+        
+        // Try common COM ports
+        string[] comPorts = { "COM1", "COM2", "COM3", "COM4", "COM5", "COM6" };
+        foreach (string port in comPorts)
+        {
+            Console.WriteLine($"🔌 Trying port {port}...");
+            success = Z339xLib.Z339xLibSdk.CaptureAndSave(port, savePath, 2);
+            if (success)
+            {
+                Console.WriteLine($"✅ Success with port {port}: {savePath}");
+                return;
+            }
+        }
+
+        Console.WriteLine("❌ All capture attempts failed. Please check:");
+        Console.WriteLine("   - Device is connected and powered on");
+        Console.WriteLine("   - Device drivers are installed");
+        Console.WriteLine("   - Device is in camera mode");
+        Console.WriteLine("   - Try running as administrator");
     }
 }
