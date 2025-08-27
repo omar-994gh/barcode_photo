@@ -1,0 +1,20 @@
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.AssemblyInfoInputs.cache
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.AssemblyInfo.cs
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.csproj.CoreCompileInputs.cache
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\c# test.exe
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\c# test.deps.json
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\c# test.runtimeconfig.json
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\c# test.dll
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\c# test.pdb
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.dll
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\refint\c# test.dll
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.pdb
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.genruntimeconfig.cache
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\ref\c# test.dll
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.csproj.AssemblyReference.cache
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\System.Drawing.Common.dll
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\System.Private.Windows.Core.dll
+D:\Projects\Sadek\c# test\bin\Debug\net9.0\runtimes\win\lib\net9.0\Microsoft.Win32.SystemEvents.dll
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\c# test.csproj.Up2Date

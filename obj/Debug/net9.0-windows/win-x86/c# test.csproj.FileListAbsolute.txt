@@ -1,0 +1,5 @@
+D:\Projects\Sadek\c# test\obj\Debug\net9.0-windows\win-x86\c# test.csproj.AssemblyReference.cache
+D:\Projects\Sadek\c# test\obj\Debug\net9.0-windows\win-x86\c# test.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\Sadek\c# test\obj\Debug\net9.0-windows\win-x86\c# test.AssemblyInfoInputs.cache
+D:\Projects\Sadek\c# test\obj\Debug\net9.0-windows\win-x86\c# test.AssemblyInfo.cs
+D:\Projects\Sadek\c# test\obj\Debug\net9.0-windows\win-x86\c# test.csproj.CoreCompileInputs.cache

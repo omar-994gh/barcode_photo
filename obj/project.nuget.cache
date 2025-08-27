@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "kvbBKrERAco=",
+  "success": true,
+  "projectFilePath": "D:\\Projects\\Sadek\\c# test\\c# test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.win32.systemevents\\9.0.8\\microsoft.win32.systemevents.9.0.8.nupkg.sha512",
+    "C:\\Users\\lenovo\\.nuget\\packages\\system.drawing.common\\9.0.8\\system.drawing.common.9.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
