@@ -1,19 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <Platforms>x86</Platforms>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>c__test</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <EnableWindowsForms>true</EnableWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Z3272PStdLib.dll">
-        <HintPath>Z3272PStdLib.dll</HintPath>
-        <Private>true</Private>
-    </Reference>
+    <None Include="Z3272PStdLib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
