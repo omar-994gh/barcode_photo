@@ -17,3 +17,4 @@ D:\Projects\Sadek\c# test\obj\Debug\net9.0\win-x86\refint\c# test.dll
 D:\Projects\Sadek\c# test\obj\Debug\net9.0\win-x86\c# test.pdb
 D:\Projects\Sadek\c# test\obj\Debug\net9.0\win-x86\c# test.genruntimeconfig.cache
 D:\Projects\Sadek\c# test\obj\Debug\net9.0\win-x86\ref\c# test.dll
+D:\Projects\Sadek\c# test\obj\Debug\net9.0\win-x86\c# test.sourcelink.json

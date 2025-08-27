@@ -5,110 +5,75 @@ using System.Runtime.InteropServices;
 
 namespace Z339xLib
 {
-    public class Z339xLibSdk
+    public static class Z339xLibSdk
     {
-        private const string DllName = "Z3272PStdLib.dll";
+        // استدعاء الدوال من Z3272PStdLib.dll
+        [DllImport("Z3272PStdLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool GetImageAndSaveFile(string portName, string fileName, int format);
 
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-        private static extern int OpenHID();
+        [DllImport("Z3272PStdLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr GetImageByBitmap(string portName);
 
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-        private static extern int CloseHID(int handle);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-        private static extern int GetImageAndSaveFile(int handle, string filePath);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr GetImageByBitmap(int handle);
-
-        [DllImport("gdi32.dll")]
-        private static extern int GetObject(IntPtr hgdiobj, int cbBuffer, out BITMAP lpvObject);
-
-        [DllImport("gdi32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool DeleteObject(IntPtr hObject);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct BITMAP
+        /// <summary>
+        /// يحفظ الصورة مباشرة بالمسار المطلوب
+        /// </summary>
+        /// <param name="portName">مثلاً "AUTO" أو COM Port</param>
+        /// <param name="fileName">المسار لحفظ الصورة</param>
+        /// <param name="format">0=png, 1=bmp, 2=jpeg, 3=tiff</param>
+        /// <returns>True إذا نجحت العملية</returns>
+        public static bool CaptureAndSave(string portName, string fileName, int format = 2)
         {
-            public int bmType;
-            public int bmWidth;
-            public int bmHeight;
-            public int bmWidthBytes;
-            public ushort bmPlanes;
-            public ushort bmBitsPixel;
-            public IntPtr bmBits;
+            return GetImageAndSaveFile(portName, fileName, format);
         }
 
-        private int _handle;
-
-        public bool Open()
+        /// <summary>
+        /// يرجع الصورة كـ Bitmap Object 
+        /// </summary>
+        /// <param name="portName">مثلاً "AUTO" أو COM Port</param>
+        /// <returns>Bitmap object أو null إذا صار خطأ</returns>
+        public static Bitmap CaptureBitmap(string portName)
         {
-            _handle = OpenHID();
-            Console.WriteLine($"🔌 OpenHID → {_handle}");
-            return _handle > 0;
-        }
-
-        public void Close()
-        {
-            if (_handle > 0)
-            {
-                Console.WriteLine($"🔒 Closing handle {_handle}");
-                CloseHID(_handle);
-                _handle = 0;
-            }
-        }
-
-        public bool CaptureToFile(string path)
-        {
-            Console.WriteLine("📸 Trying direct save with GetImageAndSaveFile...");
-            int ret = GetImageAndSaveFile(_handle, path);
-            Console.WriteLine($"GetImageAndSaveFile → {ret}");
-
-            return ret == 1; // 1 يعني نجاح حسب convention DLL
-        }
-
-        public Bitmap CaptureBitmap()
-        {
-            Console.WriteLine("📸 Trying GetImageByBitmap...");
-
-            IntPtr hBmp = GetImageByBitmap(_handle);
-            if (hBmp == IntPtr.Zero)
-            {
-                Console.WriteLine("❌ GetImageByBitmap returned NULL");
+            IntPtr bmpPtr = GetImageByBitmap(portName);
+            if (bmpPtr == IntPtr.Zero)
                 return null;
-            }
 
-            // تحقق من صلاحية الـ HBITMAP
-            BITMAP bmpObj;
-            int result = GetObject(hBmp, Marshal.SizeOf(typeof(BITMAP)), out bmpObj);
+            Bitmap bmp = Image.FromHbitmap(bmpPtr);
+            return bmp;
+        }
+    }
+}
 
-            if (result == 0 || bmpObj.bmWidth == 0 || bmpObj.bmHeight == 0)
+// =============================
+// مثال للاستخدام
+// =============================
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("🔌 Trying direct save with GetImageAndSaveFile...");
+        string savePath = @"C:\Temp\capture.jpg";
+
+        bool success = Z339xLib.Z339xLibSdk.CaptureAndSave("AUTO", savePath, 2); // JPEG
+        if (success)
+        {
+            Console.WriteLine("✅ Saved directly: " + savePath);
+        }
+        else
+        {
+            Console.WriteLine("❌ Failed direct save. Trying GetImageByBitmap...");
+
+            Bitmap bmp = Z339xLib.Z339xLibSdk.CaptureBitmap("AUTO");
+            if (bmp != null)
             {
-                Console.WriteLine("⚠️ Invalid HBITMAP returned from device.");
-                DeleteObject(hBmp); // حرره عشان ما يضل leak
-                return null;
-            }
-
-            Console.WriteLine($"HBITMAP → {bmpObj.bmWidth}x{bmpObj.bmHeight}, BitsPixel={bmpObj.bmBitsPixel}");
-
-            try
-            {
-                Bitmap bmp = Image.FromHbitmap(hBmp);
-
-                // مهم: اعمل نسخة جديدة عشان ما تعتمد على الهاندل unmanaged
-                Bitmap clone = new Bitmap(bmp);
-
+                string fallbackPath = @"C:\Temp\capture_fallback.jpg";
+                bmp.Save(fallbackPath, ImageFormat.Jpeg);
+                Console.WriteLine("✅ Captured via Bitmap: " + fallbackPath);
                 bmp.Dispose();
-                DeleteObject(hBmp); // حرر الهاندل unmanaged
-
-                return clone;
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine($"❌ Failed to create Bitmap from HBITMAP: {ex.Message}");
-                DeleteObject(hBmp);
-                return null;
+                Console.WriteLine("❌ CaptureBitmap returned null");
             }
         }
     }
